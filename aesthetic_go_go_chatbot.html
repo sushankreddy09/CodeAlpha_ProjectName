@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aesthetic Go-Go | FAQ Bot</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        :root {
+            --neon-pink: #ff00ff;
+            --neon-cyan: #00ffff;
+            --neon-purple: #9933ff;
+            --dark-bg: #120424;
+        }
+        
+        body {
+            background-color: var(--dark-bg);
+            /* Y2K Retro Grid Background */
+            background-image: 
+                linear-gradient(rgba(255, 0, 255, 0.15) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 0, 255, 0.15) 1px, transparent 1px);
+            background-size: 40px 40px;
+            font-family: 'Outfit', sans-serif;
+            color: #ffffff;
+            margin: 0;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Glowing Container */
+        .chat-container {
+            background: rgba(18, 4, 36, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 2px solid var(--neon-pink);
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.4), inset 0 0 15px rgba(255, 0, 255, 0.2);
+            border-radius: 30px;
+            overflow: hidden;
+        }
+
+        .header-font {
+            font-family: 'Fredoka', sans-serif;
+            text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan);
+        }
+
+        /* Chat Bubbles */
+        .bot-bubble {
+            background: linear-gradient(135deg, var(--neon-pink), var(--neon-purple));
+            color: white;
+            border-radius: 24px 24px 24px 6px;
+            box-shadow: 0 4px 15px rgba(255, 0, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            font-weight: 500;
+        }
+
+        .user-bubble {
+            background: linear-gradient(135deg, var(--neon-cyan), #0088ff);
+            color: var(--dark-bg);
+            border-radius: 24px 24px 6px 24px;
+            box-shadow: 0 4px 15px rgba(0, 255, 255, 0.3);
+            font-weight: 600;
+        }
+
+        /* Scrollbar Styling */
+        #chatbox::-webkit-scrollbar {
+            width: 6px;
+        }
+        #chatbox::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        #chatbox::-webkit-scrollbar-thumb {
+            background: rgba(255, 0, 255, 0.5);
+            border-radius: 10px;
+        }
+
+        /* Input area glow */
+        .input-glow:focus-within {
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+            border-color: var(--neon-cyan);
+        }
+
+        /* Typing Indicator Animation */
+        .typing-dot {
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-6 text-base md:text-lg">
+
+    <div class="chat-container flex flex-col w-full max-w-md h-[90vh] sm:h-[800px] max-h-full">
+        <!-- Header -->
+        <div class="px-6 py-5 border-b border-pink-500/50 bg-black/20 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-cyan-400 to-pink-500 p-[2px] shadow-[0_0_15px_rgba(0,255,255,0.6)] flex-shrink-0">
+                    <div class="w-full h-full bg-[#120424] rounded-full flex items-center justify-center overflow-hidden relative">
+                        <span class="text-2xl relative z-10">👽</span>
+                    </div>
+                </div>
+                <div>
+                    <h1 class="header-font text-2xl font-bold text-cyan-300 tracking-wide leading-none mb-1">Aesthetic Go-Go</h1>
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-green-400 shadow-[0_0_8px_#4ade80] animate-pulse"></span>
+                        <span class="text-xs text-pink-300 font-semibold tracking-wider">ONLINE</span>
+                    </div>
+                </div>
+            </div>
+            <i class="ph-fill ph-sparkle text-pink-400 text-2xl animate-pulse"></i>
+        </div>
+
+        <!-- Chat History -->
+        <div id="chatbox" class="flex-1 overflow-y-auto p-4 sm:p-6 flex flex-col gap-4">
+            <!-- Initial Greeting -->
+            <div class="flex flex-col gap-1 items-start w-[85%]">
+                <div class="bot-bubble px-5 py-3 text-[15px] sm:text-[16px] leading-relaxed">
+                    Hii bestie! 💖 Welcome to Aesthetic Go-Go! I'm your retro-style assistant. Ask me anything about shipping, sizing, returns, or our rad restocks! ✨💿
+                </div>
+                <span class="text-[11px] text-pink-400/70 ml-2 font-semibold">Go-Go Bot • Just now</span>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="p-4 sm:p-5 border-t border-cyan-500/30 bg-black/30">
+            <form id="chatForm" class="flex gap-2">
+                <div class="relative flex-1">
+                    <input type="text" id="userInput" autocomplete="off" placeholder="Ask about shipping, returns..." 
+                        class="w-full bg-black/40 border border-pink-500/50 text-white rounded-full px-5 py-3.5 focus:outline-none input-glow transition-all placeholder:text-pink-300/50 text-[15px] sm:text-[16px]">
+                </div>
+                <button type="submit" class="w-[52px] h-[52px] rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 flex items-center justify-center text-black hover:scale-105 active:scale-95 transition-transform shadow-[0_0_15px_rgba(0,255,255,0.4)] flex-shrink-0">
+                    <i class="ph-bold ph-paper-plane-right text-xl"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Vanilla JS NLP Engine & Chat Logic -->
+    <script>
+        // --- 1. FAQ Dataset ---
+        const faqs = [
+            { q: "Do you ship internationally?", a: "OMG yes! We ship our retro fits worldwide! 🌍✨" },
+            { q: "What is your return policy?", a: "You have 30 days to return any unworn items for a full refund. Keep the tags on, bestie! 💖" },
+            { q: "How long does shipping take?", a: "Standard shipping is 5-7 business days, but express is like, super fast (2-3 days)! 🚀" },
+            { q: "Do your clothes run true to size?", a: "Mostly yes, but since it's retro styling, check our size chart! If you're in between sizes, definitely size up! 📏" },
+            { q: "When will you restock the glitter boots?", a: "The glitter boots drop every first Friday of the month! Set your alarms! ⏰✨" },
+            { q: "Can I track my order?", a: "Totally! Once shipped, you'll get a tracking link sent straight to your email. 💌" },
+            { q: "Do you offer student discounts?", a: "Yes! Verify with StudentBeans to get 15% off your entire cart! 🎓💸" },
+            { q: "What payment methods do you accept?", a: "We take all major credit cards, PayPal, and Apple Pay! 💳" },
+            { q: "How do I wash the neon windbreakers?", a: "Cold wash only and hang dry so the neon stays blindingly bright! 🧼🌈" },
+            { q: "Can I cancel my order?", a: "You have a 2-hour window to cancel after ordering. Hit us up ASAP on the contact page! 🛑" },
+            { q: "Are your items sustainable?", a: "We source vintage deadstock and use recycled packaging to keep the planet cute! 🌿🌍" },
+            { q: "Do you sell gift cards?", a: "Duh! We have digital gift cards ranging from $10 to $100. Perfect for gifting! 🎁💖" },
+            { q: "Where is your store located?", a: "We are currently an online-only boutique, but pop-up shops are coming this summer! ☀️🏖️" },
+            { q: "My item arrived damaged, what do I do?", a: "Oh no! 🥺 Please email us a photo within 48 hours of delivery and we will send a replacement immediately!" }
+        ];
+
+        // --- 2. NLP Engine Implementation (TF-IDF + Cosine Similarity) ---
+
+        // Common English Stop Words
+        const stopWords = new Set(["i","me","my","myself","we","our","ours","ourselves","you","your","yours","yourself","yourselves","he","him","his","himself","she","her","hers","herself","it","its","itself","they","them","their","theirs","themselves","what","which","who","whom","this","that","these","those","am","is","are","was","were","be","been","being","have","has","had","having","do","does","did","doing","a","an","the","and","but","if","or","because","as","until","while","of","at","by","for","with","about","against","between","into","through","during","before","after","above","below","to","from","up","down","in","out","on","off","over","under","again","further","then","once","here","there","when","where","why","how","all","any","both","each","few","more","most","other","some","such","no","nor","not","only","own","same","so","than","too","very","s","t","can","will","just","don","should","now","hello","hi","hey"]);
+
+        // Tokenizer & Cleaner
+        function tokenize(text) {
+            return text.toLowerCase()
+                       .replace(/[^\w\s]/g, '') // remove punctuation
+                       .split(/\s+/)            // split by whitespace
+                       .filter(w => w.length > 0 && !stopWords.has(w)); // remove stopwords & empty strings
+        }
+
+        // Preprocess Corpus
+        const corpusTokens = faqs.map(faq => tokenize(faq.q));
+        
+        // Build Vocabulary
+        const vocabSet = new Set();
+        corpusTokens.forEach(tokens => tokens.forEach(token => vocabSet.add(token)));
+        const vocab = Array.from(vocabSet);
+
+        // Calculate IDF (Inverse Document Frequency)
+        const N = corpusTokens.length;
+        const idf = {};
+        vocab.forEach(word => {
+            const docCount = corpusTokens.filter(tokens => tokens.includes(word)).length;
+            // Add 1 for smoothing
+            idf[word] = Math.log(N / (1 + docCount)) + 1; 
+        });
+
+        // Function to create TF-IDF vector for a set of tokens
+        function getTfIdfVector(tokens) {
+            const vector = new Array(vocab.length).fill(0);
+            const tokenCounts = {};
+            tokens.forEach(t => tokenCounts[t] = (tokenCounts[t] || 0) + 1);
+            
+            const totalTokens = tokens.length || 1; // avoid division by zero
+
+            vocab.forEach((word, index) => {
+                const tf = (tokenCounts[word] || 0) / totalTokens;
+                vector[index] = tf * (idf[word] || 0);
+            });
+
+            return vector;
+        }
+
+        // Pre-calculate vectors for all FAQs
+        const faqVectors = corpusTokens.map(getTfIdfVector);
+
+        // Calculate Cosine Similarity
+        function cosineSimilarity(vecA, vecB) {
+            let dotProduct = 0;
+            let normA = 0;
+            let normB = 0;
+            for (let i = 0; i < vecA.length; i++) {
+                dotProduct += vecA[i] * vecB[i];
+                normA += vecA[i] ** 2;
+                normB += vecB[i] ** 2;
+            }
+            if (normA === 0 || normB === 0) return 0;
+            return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
+        }
+
+        // Main Matching Function
+        function findBestFAQMatch(userQuery) {
+            const queryTokens = tokenize(userQuery);
+            if (queryTokens.length === 0) return null; // Only stop words or punctuation
+
+            const queryVector = getTfIdfVector(queryTokens);
+            
+            let bestMatchIdx = -1;
+            let bestScore = -1;
+
+            faqVectors.forEach((docVector, idx) => {
+                const score = cosineSimilarity(queryVector, docVector);
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestMatchIdx = idx;
+                }
+            });
+
+            // Threshold Check
+            if (bestScore >= 0.15) {
+                return faqs[bestMatchIdx].a;
+            } else {
+                return null; // Fallback
+            }
+        }
+
+        // --- 3. UI Interaction Logic ---
+        
+        const chatForm = document.getElementById('chatForm');
+        const userInput = document.getElementById('userInput');
+        const chatbox = document.getElementById('chatbox');
+
+        // Helper to format time
+        function getTimeString() {
+            const now = new Date();
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; 
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            return `${hours}:${minutes} ${ampm}`;
+        }
+
+        // Scroll to bottom helper
+        function scrollToBottom() {
+            chatbox.scrollTo({
+                top: chatbox.scrollHeight,
+                behavior: 'smooth'
+            });
+        }
+
+        // Add user message to UI
+        function addUserMessage(text) {
+            const msgHTML = `
+                <div class="flex flex-col gap-1 items-end w-full">
+                    <div class="user-bubble px-5 py-3 text-[15px] sm:text-[16px] leading-relaxed max-w-[85%]">
+                        ${escapeHTML(text)}
+                    </div>
+                    <span class="text-[11px] text-cyan-400/70 mr-2 font-semibold">You • ${getTimeString()}</span>
+                </div>
+            `;
+            chatbox.insertAdjacentHTML('beforeend', msgHTML);
+            scrollToBottom();
+        }
+
+        // Add Bot typing indicator
+        function addTypingIndicator() {
+            const id = 'typing-' + Date.now();
+            const msgHTML = `
+                <div id="${id}" class="flex flex-col gap-1 items-start w-[85%]">
+                    <div class="bot-bubble px-5 py-4 flex gap-1 items-center justify-center">
+                        <div class="w-2 h-2 bg-white rounded-full typing-dot"></div>
+                        <div class="w-2 h-2 bg-white rounded-full typing-dot"></div>
+                        <div class="w-2 h-2 bg-white rounded-full typing-dot"></div>
+                    </div>
+                </div>
+            `;
+            chatbox.insertAdjacentHTML('beforeend', msgHTML);
+            scrollToBottom();
+            return id;
+        }
+
+        // Add Bot message to UI
+        function addBotMessage(text) {
+            const msgHTML = `
+                <div class="flex flex-col gap-1 items-start w-full">
+                    <div class="bot-bubble px-5 py-3 text-[15px] sm:text-[16px] leading-relaxed max-w-[85%]">
+                        ${text}
+                    </div>
+                    <span class="text-[11px] text-pink-400/70 ml-2 font-semibold">Go-Go Bot • ${getTimeString()}</span>
+                </div>
+            `;
+            chatbox.insertAdjacentHTML('beforeend', msgHTML);
+            scrollToBottom();
+        }
+
+        // Escape HTML to prevent XSS
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, 
+                tag => ({
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    "'": '&#39;',
+                    '"': '&quot;'
+                }[tag])
+            );
+        }
+
+        // Form Submit Handler
+        chatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const query = userInput.value.trim();
+            if (!query) return;
+
+            // 1. Display User Message
+            addUserMessage(query);
+            userInput.value = '';
+
+            // 2. Show typing indicator
+            const typingId = addTypingIndicator();
+
+            // 3. Process NLP Match with slight delay for realism
+            setTimeout(() => {
+                // Remove typing indicator
+                const typingEl = document.getElementById(typingId);
+                if (typingEl) typingEl.remove();
+
+                // Get Answer
+                const answer = findBestFAQMatch(query);
+                
+                // 4. Display Bot Answer
+                if (answer) {
+                    addBotMessage(answer);
+                } else {
+                    addBotMessage("Like, I totally didn't get that! 😵‍💫 Try asking about shipping, returns, or sizing! 💖");
+                }
+            }, 600 + Math.random() * 600); // 600ms - 1200ms simulated delay
+        });
+
+    </script>
+</body>
+</html>
